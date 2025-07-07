@@ -135,12 +135,12 @@ requirement_parser = Agent(
     name="RequirementParser",
     model="gpt-4o",
     instructions="""
-    你是一个需求分析专家，负责将自然语言需求转化为结构化DSL。请按以下规则处理：
-    1. 识别所有用户故事（As a... I want to...）
+    你是一个需求分析专家，负责将用户输入的自然语言需求转化为结构化DSL。请按以下规则处理：
+    1. 识别所有输入中的用户故事
     2. 提取每个用户故事的：
        - 参与者（Actor）
-       - 基本流（Basic Flow）
-       - 备选流（Alternative Flow）
+       - 基本功能流（Basic Flow）
+       - 备选功能流（Alternative Flow）
     3. 使用以下JSON格式输出：
     {
       "user_stories": [{
@@ -164,19 +164,9 @@ use_case_modeler = Agent(
     name="UseCaseModeler",
     model="gpt-4o",
     instructions="""
-    你是用例建模专家，基于结构化需求生成：
-    1. 用例图（包含Actor、UseCase及其关系）
-    2. 系统顺序图（包含消息序列）
+    你是用例建模专家，基于结构化需求生成系统顺序图（包含消息序列）：
     使用以下JSON格式：
     {
-      "use_case_diagram": {
-        "actors": ["Designer", "Developer"],
-        "use_cases": ["Upload Design", "Review Designs", ...],
-        "relationships": [
-          {"actor": "Designer", "use_case": "Upload Design"},
-          {"actor": "Developer", "use_case": "Convert Design to Code"}
-        ]
-      },
       "sequence_diagrams": [{
         "title": "Upload Design",
         "participants": ["Designer", "Platform"],
@@ -199,9 +189,7 @@ class_modeler = Agent(
     name="ClassModeler",
     model="gpt-4o",
     instructions="""
-    你是类建模专家，生成：
-    1. 概念类图（类、属性、关联关系）
-    2. OCL合约（前置/后置条件）
+    你是类建模专家，需要根据输入给你的需求用户故事信息来生成概念类图（类、属性、关联关系）
     使用JSON格式：
     {
       "class_diagram": [
@@ -214,13 +202,6 @@ class_modeler = Agent(
           "methods": [
             {"name": "validate_format", "parameters": []}
           ]
-        }
-      ],
-      "ocl_contracts": [
-        {
-          "context": "DesignImage::upload()",
-          "preconditions": ["self.size <= MAX_SIZE"],
-          "postconditions": ["Platform.designs.includes(self)"]
         }
       ]
     }
